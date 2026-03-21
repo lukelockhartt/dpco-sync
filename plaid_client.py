@@ -13,8 +13,8 @@ def get_plaid_client() -> plaid_api.PlaidApi:
     configuration = plaid.Configuration(
         host=plaid.Environment.Production,
         api_key={
-            "clientId": os.environ["PLAID_CLIENT_ID"],
-            "secret": os.environ["PLAID_SECRET"],
+            "clientId": os.environ["PLAID_CLIENT_ID"].strip(),
+            "secret": os.environ["PLAID_SECRET"].strip(),
         },
     )
     api_client = plaid.ApiClient(configuration)
@@ -23,7 +23,7 @@ def get_plaid_client() -> plaid_api.PlaidApi:
 
 def fetch_transactions(days: int = 30) -> list[dict]:
     client = get_plaid_client()
-    access_token = os.environ["PLAID_ACCESS_TOKEN"]
+    access_token = os.environ["PLAID_ACCESS_TOKEN"].strip()
 
     end_date = date.today()
     start_date = end_date - timedelta(days=days)
