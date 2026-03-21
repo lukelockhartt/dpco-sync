@@ -2,9 +2,12 @@ name: daily bank sync
 
 on:
   schedule:
-    # 9am central (14:00 utc)
+    # 9am central
     - cron: "0 14 * * *"
   workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   sync:
