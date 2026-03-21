@@ -1,0 +1,5 @@
+plaid-python
+flask
+python-dotenv
+gspread
+google-auth

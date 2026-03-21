@@ -1,0 +1,32 @@
+name: daily bank sync
+
+on:
+  schedule:
+    # 9am central (14:00 utc)
+    - cron: "0 14 * * *"
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - run: pip install -r requirements.txt
+
+      - name: write google credentials
+        run: echo '${{ secrets.GOOGLE_CREDENTIALS_JSON }}' > google_credentials.json
+
+      - name: run sync
+        env:
+          PLAID_CLIENT_ID: ${{ secrets.PLAID_CLIENT_ID }}
+          PLAID_SECRET: ${{ secrets.PLAID_SECRET }}
+          PLAID_ACCESS_TOKEN: ${{ secrets.PLAID_ACCESS_TOKEN }}
+          GOOGLE_CREDENTIALS_FILE: google_credentials.json
+          GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
+        run: python sync_to_sheets.py

@@ -1,0 +1,6 @@
+.env
+google_credentials.json
+transactions.csv
+__pycache__/
+*.pyc
+.DS_Store
