@@ -30,6 +30,7 @@ def fetch_transactions(days: int = 30) -> list[dict]:
 
     all_transactions = []
     offset = 0
+    PAGE_SIZE = 500
 
     while True:
         request = TransactionsGetRequest(
@@ -37,7 +38,7 @@ def fetch_transactions(days: int = 30) -> list[dict]:
             start_date=start_date,
             end_date=end_date,
             options=TransactionsGetRequestOptions(
-                count=500,
+                count=PAGE_SIZE,
                 offset=offset,
             ),
         )
@@ -45,7 +46,10 @@ def fetch_transactions(days: int = 30) -> list[dict]:
         transactions = response["transactions"]
         all_transactions.extend(transactions)
 
-        if len(all_transactions) >= response["total_transactions"]:
+        # Break when Plaid returns a short page (genuine end of results) or when
+        # we have reached the reported total. Using both conditions guards against
+        # total_transactions excluding pending entries on some institutions.
+        if len(transactions) < PAGE_SIZE or len(all_transactions) >= response["total_transactions"]:
             break
         offset += len(transactions)
 
