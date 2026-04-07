@@ -121,7 +121,12 @@ def main():
         return
 
     new_rows.sort(key=lambda r: r[0])
-    sheet.append_rows(new_rows, value_input_option="USER_ENTERED")
+
+    # Write to an explicit range starting at the first truly empty row so
+    # gspread cannot misdetect the table width and shift data sideways.
+    next_row = len(sheet.get_all_values()) + 1
+    start_cell = f"A{next_row}"
+    sheet.update(start_cell, new_rows, value_input_option="USER_ENTERED")
     print(f"added {len(new_rows)} new transactions")
 
 
